@@ -1,8 +1,12 @@
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'wordtriez/version'
+
 Gem::Specification.new do |s|
-  s.name = "triez"
-  s.version = "1.0.4"
-  s.author = "Zete Lui"
-  s.homepage = "https://github.com/luikore/triez"
+  s.name = "wordtriez"
+  s.version = Wordtriez::VERSION
+  s.author = ["Zete Lui", "Duane Johnson"]
+  s.homepage = "https://github.com/canadaduane/triez"
   s.platform = Gem::Platform::RUBY
   s.summary = "fast, efficient, unicode aware HAT trie with prefix / suffix support"
   s.description = "fast, efficient, unicode aware HAT trie with prefix / suffix support."

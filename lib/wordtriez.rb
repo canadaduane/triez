@@ -1,7 +1,7 @@
-require_relative "../ext/triez"
+require_relative "../ext/wordtriez"
 
-class Triez
-  VERSION = '1.0.4'
+class Wordtriez
+  VERSION = '0.0.2'
 
   private :_internal_set_type
   private :_internal_search
@@ -41,7 +41,7 @@ class Triez
     _internal_walk(s).each &p
   end
 
-  def search_with_prefix prefix, opts={}, &p
+  def search prefix, opts={}, &p
     opts  = opts.dup
 
     limit = opts.delete :limit
@@ -61,5 +61,13 @@ class Triez
       _internal_search prefix, limit, sort, -> k, v {a << [k, v]}
       a
     end
+  end
+
+  def add_text! text, ngrams, suffix=""
+    _internal_add_text(text, ngrams, suffix, false)
+  end
+
+  def union_text! text, ngrams, suffix=""
+    _internal_add_text(text, ngrams, suffix, true)
   end
 end

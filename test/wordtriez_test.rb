@@ -1,28 +1,28 @@
 # coding: utf-8
 require "test/unit"
-require_relative "../lib/triez"
+require_relative "../lib/wordtriez"
 
 GC.stress
 
-class TriezTest < Test::Unit::TestCase
+class WordtriezTest < Test::Unit::TestCase
   def test_init_type_options
-    t = Triez.new value_type: :int64
+    t = Wordtriez.new value_type: :int64
     assert_equal :int64, t.value_type
-    t = Triez.new value_type: :object
+    t = Wordtriez.new value_type: :object
     assert_equal :object, t.value_type
-    t = Triez.new
+    t = Wordtriez.new
     assert_equal :int64, t.value_type
 
     assert_raise ArgumentError do
-      Triez.new value_type: :string
+      Wordtriez.new value_type: :string
     end
     assert_raise ArgumentError do
-      Triez.new invalid_option: :int64
+      Wordtriez.new invalid_option: :int64
     end
   end
 
   def test_hat_trie
-    t = Triez.new value_type: :object
+    t = Wordtriez.new value_type: :object
 
     v1 = (1 << 40)
     v2 = (1 << 141)
@@ -38,16 +38,16 @@ class TriezTest < Test::Unit::TestCase
     assert_equal nil, t['万塘路一锅鸡']
     assert_equal v2, t['万塘路']
 
-    a = t.search_with_prefix ''
+    a = t.search ''
     assert_equal [['万塘路', v2]], a
 
     t['马当路'] = 3
-    a = t.search_with_prefix '万塘'
+    a = t.search '万塘'
     assert_equal [['路', v2]], a
   end
 
   def test_insertion_and_search_on_many_keys
-    t = Triez.new
+    t = Wordtriez.new
     as = ('A'..'z').to_a
     bs = ('一'..'百').to_a
     as.each do |a|
@@ -58,11 +58,11 @@ class TriezTest < Test::Unit::TestCase
     end
     assert_equal as.size * bs.size, t.size
 
-    a = t.search_with_prefix 'a'
+    a = t.search 'a'
     assert_equal bs.to_a, a.map(&:first).sort
 
     a = []
-    t.search_with_prefix 'b', sort: true, limit: 3 do |k, v|
+    t.search 'b', sort: true, limit: 3 do |k, v|
       a << k
     end
     assert_equal 3, a.size
@@ -70,7 +70,7 @@ class TriezTest < Test::Unit::TestCase
   end
 
   def test_each_and_raise
-    t = Triez.new
+    t = Wordtriez.new
     t['abcd'] = 0
     t['abc'] = 1
 
@@ -86,7 +86,7 @@ class TriezTest < Test::Unit::TestCase
   end
 
   def test_append
-    t = Triez.new
+    t = Wordtriez.new
     ('a'..'z').each do |c|
       t << c
     end
@@ -101,15 +101,15 @@ class TriezTest < Test::Unit::TestCase
       'ATACGGTCCA' => 2,
       'GCTTGTACGT' => 3
     }
-    t = Triez.new
+    t = Wordtriez.new
     sequences.each do |seq, id|
       t.change_all(:suffix, seq){ id }
     end
-    assert_equal 2, t.search_with_prefix('CGGT').map(&:last).flatten.first
+    assert_equal 2, t.search('CGGT').map(&:last).flatten.first
   end
 
   def test_nul_char_in_keys
-    t = Triez.new
+    t = Wordtriez.new
     t["a\0b"] = 1
     assert_equal 1, t["a\0b"]
     assert_equal 1, t.size
@@ -118,7 +118,7 @@ class TriezTest < Test::Unit::TestCase
 
   def test_change_all_with_prefix
     default = 10
-    t = Triez.new default: default
+    t = Wordtriez.new default: default
     t['regexp'] = 1
     t['readme'] = 2
     t.change_all :prefix, 'readme' do |v|
@@ -131,7 +131,7 @@ class TriezTest < Test::Unit::TestCase
   end
 
   def test_change_all_with_suffix
-    t = Triez.new
+    t = Wordtriez.new
     t['regexp'] = 1
     t['exp'] = 2
     t['reg'] = 3
@@ -145,7 +145,7 @@ class TriezTest < Test::Unit::TestCase
   end
 
   def test_change_all_with_substring
-    t = Triez.new value_type: :object
+    t = Wordtriez.new value_type: :object
     t.change_all :substring, 'abc' do
       1
     end
@@ -163,7 +163,7 @@ class TriezTest < Test::Unit::TestCase
       /users/12/edit
       /posts
     ]
-    t = Triez.new value_type: :object
+    t = Wordtriez.new value_type: :object
     urls.each_with_index do |url, i|
       t[url] = i.to_s
     end
@@ -195,7 +195,7 @@ class TriezTest < Test::Unit::TestCase
 
     # value is bitset representing id of the sentence
     # in ruby we can use integers of arbitrary length as bitsets
-    t = Triez.new value_type: :object, default: 0
+    t = Wordtriez.new value_type: :object, default: 0
 
     sentences.each_with_index do |sentence, i|
       elem = 1 << i
@@ -214,12 +214,12 @@ class TriezTest < Test::Unit::TestCase
     assert_equal '一锅鸡', lcs
   end
 
-  def test_should_not_segfault_when_search_with_prefix
-    t = Triez.new
+  def test_should_not_segfault_when_search
+    t = Wordtriez.new
     # bursts when 16384
     16_385.times{ |i| t["a#{i}"] = i }
     expected_postfices = 16_385.times.map &:to_s
-    actual_postfices = t.search_with_prefix("a").map(&:first)
+    actual_postfices = t.search("a").map(&:first)
     assert_equal expected_postfices.sort, actual_postfices.sort
   end
 end

@@ -2,7 +2,7 @@ require "rbconfig"
 require "fileutils"
 include FileUtils
 
-so_file = "ext/triez.#{RbConfig::CONFIG['DLEXT']}"
+so_file = "ext/wordtriez.#{RbConfig::CONFIG['DLEXT']}"
 src_files = Dir.glob('ext/*.{h,c,cc}')
 vendor_files = %w[hat-trie]
 extconf = 'ext/extconf.rb'
@@ -29,7 +29,7 @@ end
 
 desc "run tests"
 task :default => so_file do
-  sh 'ruby', "test/triez_test.rb"
+  sh 'ruby', "test/wordtriez_test.rb"
 end
 
 desc "build ext"
