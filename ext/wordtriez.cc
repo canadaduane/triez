@@ -276,8 +276,7 @@ static VALUE hat_walk(VALUE self, VALUE key) {
 static VALUE hat_text_clean(VALUE self, VALUE text) {
     rb_str_modify(text);
 
-    char* ctext = StringValueCStr(text);
-    size_t new_length = text_clean(ctext);
+    size_t new_length = text_clean(RSTRING_PTR(text), RSTRING_LEN(text));
 
     rb_str_set_len(text, (long)new_length);
 
@@ -296,7 +295,8 @@ static VALUE hat_add_text(VALUE self, VALUE text, VALUE ngrams, VALUE suffix, VA
         FIX2INT(ngrams),
         RSTRING_PTR(text),
         RSTRING_LEN(text),
-        StringValueCStr(suffix),
+        RSTRING_PTR(suffix),
+        RSTRING_LEN(suffix),
         RTEST(incr_existing_keys_only));
 
     return self;
