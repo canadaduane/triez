@@ -63,11 +63,11 @@ class Wordtriez
     end
   end
 
-  def add_text! text, ngrams, suffix=""
+  def add_text text, ngrams, suffix=""
     _internal_add_text(text, ngrams, suffix, false)
   end
 
-  def union_text! text, ngrams, suffix=""
+  def union_text text, ngrams, suffix=""
     _internal_add_text(text, ngrams, suffix, true)
   end
 end

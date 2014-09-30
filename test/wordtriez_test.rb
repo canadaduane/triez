@@ -222,4 +222,13 @@ class WordtriezTest < Test::Unit::TestCase
     actual_postfices = t.search("a").map(&:first)
     assert_equal expected_postfices.sort, actual_postfices.sort
   end
+
+  def test_add_text
+    t = Wordtriez.new
+    t.add_text("some text.ok.", 2)
+    assert_equal t['some'], 1
+    assert_equal t['some text'], 1
+    assert_equal t['text'], 1
+    assert_equal t['text.ok'], 1
+  end
 end

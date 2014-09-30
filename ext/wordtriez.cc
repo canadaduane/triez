@@ -1,5 +1,5 @@
 #include <hat-trie.h>
-#include <text.h>
+#include <ngram.h>
 #include <ruby.h>
 #include <ruby/encoding.h>
 
@@ -273,25 +273,13 @@ static VALUE hat_walk(VALUE self, VALUE key) {
     return data.arr;
 }
 
-static VALUE hat_text_clean(VALUE self, VALUE text) {
-    rb_str_modify(text);
-
-    size_t new_length = text_clean(RSTRING_PTR(text), RSTRING_LEN(text));
-
-    rb_str_set_len(text, (long)new_length);
-
-    return text;
-}
-
 static VALUE hat_add_text(VALUE self, VALUE text, VALUE ngrams, VALUE suffix, VALUE incr_existing_keys_only) {
-    hattrie_t* p;
+    hattrie_t* trie;
     HatTrie* ht;
     Data_Get_Struct(self, HatTrie, ht);
-    p = ht->p;
+    trie = ht->p;
 
-    hat_text_clean(self, text);
-
-    add_ngrams_with_suffix(p,
+    ngram_add_from_text_with_suffix(trie,
         FIX2INT(ngrams),
         RSTRING_PTR(text),
         RSTRING_LEN(text),
@@ -323,5 +311,4 @@ void Init_wordtriez() {
     DEF(hat_class, "_internal_search", hat_search, 4);
     DEF(hat_class, "_internal_walk", hat_walk, 1);
     DEF(hat_class, "_internal_add_text", hat_add_text, 4);
-    DEF(hat_class, "text_clean", hat_text_clean, 1);
 }

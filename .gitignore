@@ -1,12 +1,10 @@
-/hat-trie
-/marisa-trie
 *.o
 *.a
 *.so
 *.dll
 *.bundle
-Makefile
 .DS_Store
+Makefile
 benchmark
 *.gem
 .rbx
